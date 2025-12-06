@@ -19,6 +19,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "./custom-toast";
 import SubmitButton from "./submit-button";
+import { apiClient } from "@/lib/api-handler";
 
 interface AuthFormProps {
   ShowPage: "signin" | "signup";
@@ -103,6 +104,35 @@ export default function AuthForm({ ShowPage }: AuthFormProps) {
       return;
     }
 
+    try {
+      const UserDataRequest = await apiClient.getUser(signInData.userEmail);
+      if (UserDataRequest.message == "User not found!") {
+        toast.warning({
+          title: "Warning",
+          description: "User not found!",
+        });
+      } else {
+        if (values.userEmail == UserDataRequest.user?.userEmail && values.password == UserDataRequest.user.password) {
+          toast.success({
+            title: "Success",
+            description: "You have successfully logged in!",
+          });
+          router.push("/dashboard");
+        } else {
+          toast.warning({
+            title: "Warning",
+            description: "Invalid Credentials!",
+          });
+        }
+      }
+    } catch (error) {
+      toast.error({
+        title: "Error",
+        description: (error as Error).message,
+      });
+    }
+
+
   }
 
   const onSignUpSubmit = async () => {
@@ -134,6 +164,20 @@ export default function AuthForm({ ShowPage }: AuthFormProps) {
         description: "Plase input a valid email address",
       });
       return;
+    }
+
+    try {
+      await apiClient.registerUser(values);
+      toast.success({
+        title: "Success",
+        description: "You have successfully Registered!",
+      });
+      setIsSignIn(true);
+    } catch (error) {
+      toast.error({
+        title: "Error",
+        description: (error as Error).message,
+      });
     }
 
   };
