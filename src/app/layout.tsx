@@ -46,7 +46,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
   const PathNameArray = pathname.split("/").filter(Boolean);
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
