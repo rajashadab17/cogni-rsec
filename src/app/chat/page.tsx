@@ -4,6 +4,21 @@ import { Input } from "@/components/ui/input";
 import { Send } from "lucide-react";
 import React, { useState } from "react";
 
+interface Message {
+  id: string;
+  content: string;
+  sender: "user" | "ai";
+  timestamp: Date;
+  files?: MessageFile[];
+  isStreaming: boolean;
+}
+
+interface MessageFile {
+  name: string;
+  type: string;
+  preview?: string;
+}
+
 const page = () => {
   const [inputValue, setInputValue] = useState("");
 
@@ -49,6 +64,9 @@ const page = () => {
                 </Button>
               </div>
             </div>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
+            CogniQuery AI can make mistakes. Check important info.
+          </p>
           </div>
         </div>
       </div>
