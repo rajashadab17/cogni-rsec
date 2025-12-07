@@ -31,7 +31,7 @@ import {
   User
 } from "lucide-react";
 import * as React from "react";
-import { ModeToggle } from "./theme-toggle";
+import { ThemeToggle } from "./theme-toggle";
 import { SettingsDialog } from "./setting-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
@@ -122,7 +122,7 @@ export function NavActions() {
     <div className="flex items-center gap-3 text-sm">
       <Button variant="ghost" size="icon" className="h-7 w-7" asChild>
         <div className="flex items-center justify-center">
-          <ModeToggle />
+          <ThemeToggle />
         </div>
       </Button>
 
