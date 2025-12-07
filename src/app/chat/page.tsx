@@ -33,31 +33,13 @@ import {
 import type React from "react";
 import { JSX, useRef, useState } from "react";
 
-interface MessageFile {
-  name: string;
-  type: string;
-  preview?: string;
-}
 
-interface Message {
-  id: string;
-  content: string;
-  sender: "user" | "ai";
-  timestamp: Date;
-  files?: MessageFile[];
-  isStreaming: boolean;
-}
-
-interface UploadedFile {
-  file: File;
-  preview?: string;
-  isLoading: boolean;
-}
 
 export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
+      title:"New Chat",
       content:
         "Assalam-o-Alaikum! 🌟 I’m ShadBot — your smart (and slightly overconfident 😅) assistant. I may not know your secrets, but I sure know a lot of facts 🤓. Let’s see if I can impress you — what’s your first question?",
 
@@ -81,6 +63,7 @@ export default function Chat() {
 
     const newMessage: Message = {
       id: Date.now().toString(),
+      title:"New Chat",
       content: inputValue,
       sender: "user",
       timestamp: new Date(),
@@ -93,6 +76,7 @@ export default function Chat() {
     const aiMessageId = (Date.now() + 1).toString();
     const aiMessage: Message = {
       id: aiMessageId,
+      title:"New Chat",
       content: "",
       sender: "ai",
       timestamp: new Date(),
@@ -175,6 +159,7 @@ export default function Chat() {
 
       const errorMessage: Message = {
         id: (Date.now() + 2).toString(),
+        title:"New Chat",
         content:
           "Sorry, there was an error processing your request. Please try again.",
         sender: "ai",

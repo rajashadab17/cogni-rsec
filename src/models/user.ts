@@ -1,5 +1,7 @@
 import { Document, Model, model, Schema } from "mongoose";
 
+
+
 export interface IUser extends Document {
   username: string;
   userEmail: string;
@@ -7,6 +9,7 @@ export interface IUser extends Document {
   confirmPassword: string;
   createdAt: Date;
   updatedAt: Date;
+  ChatHistory: Message []
 }
 
 const userSchema: Schema<IUser> = new Schema(
