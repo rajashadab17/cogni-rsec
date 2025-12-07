@@ -28,10 +28,10 @@ export async function POST(req: NextRequest) {
         messages: body.messages,
         stream: true,
       });
-      console.log(`✅ Using model: ${model}`);
+      console.log(`Using model: ${model}`);
       break; 
     } catch (err) {
-      console.error(`❌ Failed on ${model}`, err);
+      console.error(`Failed on ${model}`, err);
       lastError = err;
     }
   }

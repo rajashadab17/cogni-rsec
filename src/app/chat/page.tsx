@@ -43,126 +43,136 @@ export default function Chat() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSendMessage = async () => {
-    if (!inputValue.trim() && uploadedFiles.length === 0) return;
+  if (!inputValue.trim() && uploadedFiles.length === 0) return;
 
-    const messageFiles: MessageFile[] = uploadedFiles.map((uf) => ({
-      name: uf.file.name,
-      type: uf.file.type,
-      preview: uf.preview,
-      timestamp: new Date(),
-    }));
+  const isFirstMessage = messages.length === 1;
 
-    const newMessage: Message = {
-      id: Date.now().toString(),
-      title: "New Chat",
-      content: inputValue,
-      sender: "user",
-      timestamp: new Date(),
-      files: messageFiles.length > 0 ? messageFiles : undefined,
-      isStreaming: false,
-    };
+  let generatedTitle = "New Chat"; // default
 
-    setMessages((prev) => [...prev, newMessage]);
+  // ⭐ Generate title only for the first user message
+  if (isFirstMessage) {
+    try {
+      const titleResp = await fetch("/api/title", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: inputValue }),
+      });
 
-    const aiMessageId = (Date.now() + 1).toString();
-    const aiMessage: Message = {
-      id: aiMessageId,
-      title: "New Chat",
-      content: "",
+      const titleData = await titleResp.json();
+      generatedTitle = titleData.title || "New Chat";
+      console.log({generatedTitle})
+    } catch (err) {
+      console.error("Title generation failed:", err);
+    }
+  } else {
+    // For subsequent messages, reuse the title from previous messages
+    generatedTitle = messages[0]?.title || "New Chat";
+  }
+
+  const messageFiles: MessageFile[] = uploadedFiles.map((uf) => ({
+    name: uf.file.name,
+    type: uf.file.type,
+    preview: uf.preview,
+    timestamp: new Date(),
+  }));
+
+  const userMessage: Message = {
+    id: Date.now().toString(),
+    title: generatedTitle, // ✅ Use generated title
+    content: inputValue,
+    sender: "user",
+    timestamp: new Date(),
+    files: messageFiles.length > 0 ? messageFiles : undefined,
+    isStreaming: false,
+  };
+
+  // Add user message immediately to UI
+  setMessages((prev) => [...prev, userMessage]);
+
+  const aiMessageId = (Date.now() + 1).toString();
+  const aiMessage: Message = {
+    id: aiMessageId,
+    title: generatedTitle, // ✅ Same title
+    content: "",
+    sender: "ai",
+    timestamp: new Date(),
+    isStreaming: true,
+  };
+
+  setMessages((prev) => [...prev, aiMessage]);
+
+  const currentInput = inputValue;
+  setInputValue("");
+  setUploadedFiles([]);
+
+  const userEmail = "sda@gmail.com";
+
+  try {
+    // Save user message in DB
+    await fetch(`/api/user/${encodeURIComponent(userEmail)}/chat`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(userMessage),
+    });
+
+    // Stream AI response
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ messages: [{ role: "user", content: currentInput }] }),
+    });
+
+    if (!response.body) throw new Error("No response body");
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let accumulatedContent = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      const chunk = decoder.decode(value, { stream: true });
+      accumulatedContent += chunk;
+
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === aiMessageId
+            ? { ...msg, content: accumulatedContent, isStreaming: true }
+            : msg
+        )
+      );
+    }
+
+    // Mark AI message as finished
+    setMessages((prev) =>
+      prev.map((msg) =>
+        msg.id === aiMessageId ? { ...msg, isStreaming: false } : msg
+      )
+    );
+
+    // Save AI message in DB
+    await fetch(`/api/user/${encodeURIComponent(userEmail)}/chat`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...aiMessage, content: accumulatedContent }),
+    });
+  } catch (err) {
+    console.error("Streaming error:", err);
+    setMessages((prev) => prev.filter((msg) => msg.id !== aiMessageId));
+
+    const errorMessage: Message = {
+      id: (Date.now() + 2).toString(),
+      title: generatedTitle,
+      content: "Sorry, there was an error processing your request.",
       sender: "ai",
       timestamp: new Date(),
-      isStreaming: true,
+      isStreaming: false,
     };
+    setMessages((prev) => [...prev, errorMessage]);
+  }
+};
 
-    setMessages((prev) => [...prev, aiMessage]);
-
-    const currentInput = inputValue;
-    setInputValue("");
-    setUploadedFiles([]);
-
-    const userEmail = "sda@gmail.com";
-    try {
-      console.log("Starting API call...");
-      await fetch(`/api/user/${encodeURIComponent(userEmail)}/chat`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newMessage),
-      });
-
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          messages: [{ role: "user", content: currentInput }],
-        }),
-      });
-
-      if (!response.body) throw new Error("No response body");
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-
-      let accumulatedContent = "";
-      let isFirstChunk = true;
-
-      while (true) {
-        const { done, value } = await reader.read();
-
-        if (done) {
-          setMessages((prev) =>
-            prev.map((msg) =>
-              msg.id === aiMessageId ? { ...msg, isStreaming: false } : msg
-            )
-          );
-          break;
-        }
-
-        const chunk = decoder.decode(value, { stream: true });
-
-        accumulatedContent += chunk;
-
-        setMessages((prev) =>
-          prev.map((msg) =>
-            msg.id === aiMessageId
-              ? {
-                  ...msg,
-                  content: accumulatedContent,
-                  isStreaming: isFirstChunk ? false : msg.isStreaming,
-                }
-              : msg
-          )
-        );
-
-        isFirstChunk = false;
-      }
-      aiMessage.content = accumulatedContent;
-      await fetch(`/api/user/${encodeURIComponent(userEmail)}/chat`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(aiMessage),
-      });
-
-      console.log({ aiMessage });
-    } catch (err) {
-      console.error("Streaming error:", err);
-
-      setMessages((prev) => prev.filter((msg) => msg.id !== aiMessageId));
-
-      const errorMessage: Message = {
-        id: (Date.now() + 2).toString(),
-        title: "New Chat",
-        content:
-          "Sorry, there was an error processing your request. Please try again.",
-        sender: "ai",
-        timestamp: new Date(),
-        isStreaming: false,
-      };
-
-      setMessages((prev) => [...prev, errorMessage]);
-    }
-  };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
