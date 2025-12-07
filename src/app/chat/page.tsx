@@ -424,6 +424,21 @@ const page = () => {
           <div className="w-full mx-auto">
             <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-sm focus-within:shadow-md transition-shadow">
               <div className="flex items-end gap-2 p-3">
+                <Select value={Model} onValueChange={(val) => setModel(val)}>
+                <SelectTrigger className="w-[20x  0px]">
+                  <SelectValue placeholder="Select Model" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Models</SelectLabel>
+                    {models.map((model) => (
+                      <SelectItem value={model.Api} key={model.Api}>
+                        {model.Model}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
                 <div className="flex-1 relative">
                   <Input
                     value={inputValue}
