@@ -1,38 +1,37 @@
 "use client";
 
-import type React from "react";
-import { useState, useRef, JSX } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
-  Paperclip,
-  Send,
-  Plus,
-  X,
-  Loader2,
-  Upload,
-  Check,
-  Copy,
-} from "lucide-react";
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+    Check,
+    Copy,
+    Loader2,
+    Paperclip,
+    Plus,
+    Send,
+    X
+} from "lucide-react";
+import type React from "react";
+import { JSX, useRef, useState } from "react";
 
 interface MessageFile {
   name: string;
@@ -61,7 +60,7 @@ export default function Chat() {
       id: "1",
       content:
         "Assalam-o-Alaikum! 🌟 I’m ShadBot — your smart (and slightly overconfident 😅) assistant. I may not know your secrets, but I sure know a lot of facts 🤓. Let’s see if I can impress you — what’s your first question?",
-      // content: "Hello! I'm your AI assistant. How can I help you today?",
+
       sender: "ai",
       timestamp: new Date(),
       isStreaming: false,
@@ -91,25 +90,23 @@ export default function Chat() {
 
     setMessages((prev) => [...prev, newMessage]);
 
-    // Create AI message immediately
     const aiMessageId = (Date.now() + 1).toString();
     const aiMessage: Message = {
       id: aiMessageId,
       content: "",
       sender: "ai",
       timestamp: new Date(),
-      isStreaming: true, // Animation starts immediately
+      isStreaming: true,
     };
 
     setMessages((prev) => [...prev, aiMessage]);
 
-    // Store current input and clear form
     const currentInput = inputValue;
     setInputValue("");
     setUploadedFiles([]);
 
     try {
-      console.log("Starting API call..."); // Debug log
+      console.log("Starting API call...");
 
       const response = await fetch("/api/chat", {
         method: "POST",
@@ -121,16 +118,15 @@ export default function Chat() {
         }),
       });
 
-      console.log("Response received:", response); // Debug log
+      console.log("Response received:", response);
 
       if (!response.body) throw new Error("No response body");
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
 
-      // Use a separate variable to accumulate content
       let accumulatedContent = "";
-      let isFirstChunk = true; // Track if this is the first chunk
+      let isFirstChunk = true;
 
       while (true) {
         const { done, value } = await reader.read();
@@ -139,11 +135,11 @@ export default function Chat() {
           done,
           value,
           decoded: value ? decoder.decode(value, { stream: true }) : null,
-        }); // Debug log
+        });
 
         if (done) {
-          console.log("Stream completed, final content:", accumulatedContent); // Debug log
-          // Ensure animation is stopped when stream is done
+          console.log("Stream completed, final content:", accumulatedContent);
+
           setMessages((prev) =>
             prev.map((msg) =>
               msg.id === aiMessageId ? { ...msg, isStreaming: false } : msg
@@ -153,25 +149,23 @@ export default function Chat() {
         }
 
         const chunk = decoder.decode(value, { stream: true });
-        console.log("Decoded chunk:", chunk); // Debug log
+        console.log("Decoded chunk:", chunk);
 
         accumulatedContent += chunk;
-        console.log("Accumulated content:", accumulatedContent); // Debug log
+        console.log("Accumulated content:", accumulatedContent);
 
-        // Stop animation on FIRST token received
         setMessages((prev) =>
           prev.map((msg) =>
             msg.id === aiMessageId
               ? {
                   ...msg,
                   content: accumulatedContent,
-                  isStreaming: isFirstChunk ? false : msg.isStreaming, // Stop animation on first chunk
+                  isStreaming: isFirstChunk ? false : msg.isStreaming,
                 }
               : msg
           )
         );
 
-        // Mark that we've received the first chunk
         isFirstChunk = false;
       }
     } catch (err) {
@@ -243,7 +237,6 @@ export default function Chat() {
   const messageRef = useRef<HTMLDivElement>(null);
 
   const messageFormatter = (text: string): JSX.Element[] => {
-    // Normalize newlines (some APIs use \r\n or just \r)
     console.log(text);
     const lines = text.replace(/\r\n|\r/g, "\n").split("\n");
     const elements: JSX.Element[] = [];
@@ -282,29 +275,24 @@ export default function Chat() {
     lines.forEach((line, index) => {
       const trimmed = line.trim();
 
-      // Check for code block delimiters
       if (trimmed.startsWith("```")) {
         if (inCodeBlock) {
-          // End of code block
           inCodeBlock = false;
           flushCodeBlock(index);
         } else {
-          // Start of code block
           flushList(index);
           inCodeBlock = true;
-          // Extract language if specified (e.g., ```javascript)
+
           codeLanguage = trimmed.slice(3).trim() || "text";
         }
         return;
       }
 
-      // If we're inside a code block, collect the content
       if (inCodeBlock) {
-        codeBlockContent.push(line); // Keep original spacing
+        codeBlockContent.push(line);
         return;
       }
 
-      // Handle inline code (single backticks)
       const processInlineCode = (text: string): (string | JSX.Element)[] => {
         const parts = text.split(/(`[^`]+`)/);
         return parts
@@ -324,7 +312,6 @@ export default function Chat() {
           .flat();
       };
 
-      // Headings
       if (trimmed.startsWith("###")) {
         flushList(index);
         const headingText = trimmed.replace(/^###\s*/, "");
@@ -333,16 +320,12 @@ export default function Chat() {
             {processInlineCode(headingText)}
           </h3>
         );
-      }
-      // Bullets
-      else if (trimmed.startsWith("-")) {
+      } else if (trimmed.startsWith("-")) {
         const itemText = trimmed.replace(/^- /, "");
         currentList.push(
           <li key={`li-${index}`}>{processInlineCode(itemText)}</li>
         );
-      }
-      // Paragraphs
-      else if (trimmed !== "") {
+      } else if (trimmed !== "") {
         flushList(index);
         elements.push(
           <p key={`p-${index}`} className="mb-2 leading-relaxed">
@@ -352,7 +335,6 @@ export default function Chat() {
       }
     });
 
-    // Push final list or code block if needed
     flushList(lines.length);
     if (inCodeBlock) {
       flushCodeBlock(lines.length);
@@ -361,7 +343,6 @@ export default function Chat() {
     return elements;
   };
 
-  // Handles **bold** text
   const replaceBold = (text: string): (string | JSX.Element)[] => {
     const parts = text.split(/(\*\*[^*]+\*\*)/);
     return parts.map((part, index) => {
@@ -377,7 +358,6 @@ export default function Chat() {
       await navigator.clipboard.writeText(text);
       return true;
     } catch (err) {
-      // Fallback for older browsers
       const textArea = document.createElement("textarea");
       textArea.value = text;
       document.body.appendChild(textArea);
@@ -388,15 +368,13 @@ export default function Chat() {
     }
   };
 
-  // Add this state in your component
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
 
-  // Copy handler function
   const handleCopy = async (messageId: string, content: string) => {
     const success = await copyToClipboard(content);
     if (success) {
       setCopiedMessageId(messageId);
-      setTimeout(() => setCopiedMessageId(null), 2000); // Reset after 2 seconds
+      setTimeout(() => setCopiedMessageId(null), 2000);
     }
   };
 
@@ -685,17 +663,17 @@ export default function Chat() {
           </div>
 
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
-            ChatGPT can make mistakes. Check important info.
+            CogniQuery can make mistakes. Check important info.
           </p>
         </div>
 
-          <input
-            ref={fileInputRef}
-            type="file"
-            className="hidden"
-            onChange={handleFileChange}
-            accept="image/*,text/*,.pdf,.doc,.docx"
-          />
+        <input
+          ref={fileInputRef}
+          type="file"
+          className="hidden"
+          onChange={handleFileChange}
+          accept="image/*,text/*,.pdf,.doc,.docx"
+        />
       </div>
     </div>
   );
