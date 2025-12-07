@@ -20,6 +20,17 @@ interface MessageFile {
 }
 
 const page = () => {
+    const [messages, setMessages] = useState<Message[]>([
+    {
+      id: "1",
+      content:
+        "Assalam-o-Alaikum! 🌟 I’m ShadBot — your smart (and slightly overconfident 😅) assistant. I may not know your secrets, but I sure know a lot of facts 🤓. Let’s see if I can impress you — what’s your first question?",
+      // content: "Hello! I'm your AI assistant. How can I help you today?",
+      sender: "ai",
+      timestamp: new Date(),
+      isStreaming: false,
+    },
+  ]);
   const [inputValue, setInputValue] = useState("");
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
