@@ -1,6 +1,6 @@
 "use client";
 
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { PanelLeftIcon } from "lucide-react";
@@ -606,14 +606,12 @@ function SidebarMenuSkeleton({
 }: React.ComponentProps<"div"> & {
   showIcon?: boolean;
 }) {
-  const [width, setWidth] = useState<string | null>(null);
+  const [width] = useState(() => {
+    return `${Math.floor(Math.random() * 40) + 50}%`;
+  });
 
-  useEffect(() => {
-    setWidth(`${Math.floor(Math.random() * 40) + 50}%`);
-  }, []);
+  if (!width) return null;
 
-  if (!width) return null; 
-  
   return (
     <div
       data-slot="sidebar-menu-skeleton"
