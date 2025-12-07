@@ -35,6 +35,9 @@ const userSchema: Schema<IUser> = new Schema(
       type: String,
       required: true,
     },
+    ChatHistory: {
+      
+    }
   },
   { timestamps: true }
 );
