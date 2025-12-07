@@ -11,7 +11,7 @@ const models = [
   "meta-llama/llama-3.1-8b-instruct:free",
   "mistralai/mistral-7b-instruct:free",
   "openai/gpt-oss-120b:free",
-  "openai/gpt-3.5-turbo-16k"
+  "openai/gpt-3.5-turbo-16k",
 ];
 
 export async function POST(req: NextRequest) {
@@ -20,19 +20,33 @@ export async function POST(req: NextRequest) {
 
   let stream: any = null;
   let lastError: any = null;
-
-  for (const model of models) {
+  let selectedModel = body.Model;
+  if (selectedModel) {
     try {
       stream = await openai.chat.completions.create({
-        model,
+        model: selectedModel,
         messages: body.messages,
         stream: true,
       });
-      console.log(`Using model: ${model}`);
-      break; 
+      console.log(`Using model: ${selectedModel}`);
     } catch (err) {
-      console.error(`Failed on ${model}`, err);
+      console.error(`Failed on ${selectedModel}`, err);
       lastError = err;
+    }
+  } else {
+    for (const model of models) {
+      try {
+        stream = await openai.chat.completions.create({
+          model,
+          messages: body.messages,
+          stream: true,
+        });
+        console.log(`Using model: ${model}`);
+        break;
+      } catch (err) {
+        console.error(`Failed on ${model}`, err);
+        lastError = err;
+      }
     }
   }
 
