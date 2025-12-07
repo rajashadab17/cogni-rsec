@@ -50,6 +50,12 @@ interface MessageFile {
   preview?: string;
 }
 
+interface UploadedFile {
+  file: File;
+  preview?: string;
+  isLoading: boolean;
+}
+
 const page = () => {
     const [messages, setMessages] = useState<Message[]>([
     {
@@ -63,12 +69,55 @@ const page = () => {
     },
   ]);
   const [inputValue, setInputValue] = useState("");
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
     }
+  };
+
+  const handleFileUpload = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const newFile: UploadedFile = {
+        file,
+        isLoading: true,
+      };
+
+      if (file.type.startsWith("image/")) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const preview = e.target?.result as string;
+          setUploadedFiles((prev) => [...prev, { ...newFile, preview }]);
+          setTimeout(() => {
+            setUploadedFiles((prev) =>
+              prev.map((f) =>
+                f.file === file ? { ...f, isLoading: false } : f
+              )
+            );
+          }, 2000);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        setUploadedFiles((prev) => [...prev, newFile]);
+        setTimeout(() => {
+          setUploadedFiles((prev) =>
+            prev.map((f) => (f.file === file ? { ...f, isLoading: false } : f))
+          );
+        }, 2000);
+      }
+    }
+  };
+
+  const removeFile = (fileToRemove: File) => {
+    setUploadedFiles((prev) => prev.filter((f) => f.file !== fileToRemove));
   };
 
   const handleSendMessage = async () => {};
