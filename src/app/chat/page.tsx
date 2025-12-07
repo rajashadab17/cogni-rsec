@@ -1,8 +1,39 @@
 "use client";
+
+import type React from "react";
+import { useState, useRef, JSX } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Send } from "lucide-react";
-import React, { useState, JSX } from "react";
+import { Card } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Paperclip,
+  Send,
+  Plus,
+  X,
+  Loader2,
+  Upload,
+  Check,
+  Copy,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 
 interface Message {
   id: string;
@@ -182,6 +213,119 @@ const page = () => {
               </h1>
             </div>
           </div>
+
+          <ScrollArea className="flex-1 p-4">
+          <div className="max-w-3xl mx-auto space-y-6">
+            {messages.map((message, index) => (
+              <div
+                key={message.id}
+                className={cn(
+                  "flex gap-3 animate-in slide-in-from-bottom-2 duration-300",
+                  message.sender === "user" ? "justify-end" : "justify-start"
+                )}
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                {message.sender === "ai" && (
+                  <Avatar className="h-8 w-16  mt-1">
+                    <AvatarFallback className="bg-green-500 text-white text-xs font-medium">
+                      ShadBot
+                    </AvatarFallback>
+                  </Avatar>
+                )}
+
+                <Card
+                  className={cn(
+                    "max-w-[80%] p-4 shadow-sm transition-all duration-200 relative group rounded-2xl",
+                    message.sender === "user"
+                      ? "bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 border-gray-900 dark:border-gray-100"
+                      : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white border-gray-200 dark:border-gray-700"
+                  )}
+                >
+                  {/* Files (if any) */}
+                  {message.files && message.files.length > 0 && (
+                    <div className="mb-3 flex gap-2 flex-wrap">
+                      {message.files.map((file, fileIndex) => (
+                        <div key={fileIndex} className="relative">
+                          {file.type.startsWith("image/") && file.preview ? (
+                            <div className="w-32 h-32 rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600">
+                              <img
+                                src={file.preview || "/placeholder.svg"}
+                                alt={file.name}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-2 bg-gray-200 dark:bg-gray-700 px-3 py-2 rounded-lg">
+                              <Paperclip className="h-4 w-4 text-gray-500" />
+                              <span className="text-sm text-gray-700 dark:text-gray-300 max-w-32 truncate">
+                                {file.name}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Message Content */}
+                  {message.sender === "ai" ? (
+                    <>
+                      {message.isStreaming ? (
+                        <>
+                          {/* Loader while waiting */}
+                          <div className="flex gap-1 mb-2">
+                            <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></span>
+                            <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce [animation-delay:0.2s]"></span>
+                            <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce [animation-delay:0.4s]"></span>
+                          </div>
+                          {message.content && (
+                            <div className="text-sm leading-relaxed space-y-2">
+                              {messageFormatter(message.content)}
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <div className="text-sm leading-relaxed space-y-2">
+                          {messageFormatter(message.content)}
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    message.content && (
+                      <div className="text-sm leading-relaxed space-y-2">
+                        {messageFormatter(message.content)}
+                      </div>
+                    )
+                  )}
+
+                  {/* Timestamp */}
+                  <span
+                    className={cn(
+                      "text-xs mt-2 block opacity-70",
+                      message.sender === "user"
+                        ? "text-gray-300 dark:text-gray-600"
+                        : "text-gray-500 dark:text-gray-400"
+                    )}
+                  >
+                    {message.timestamp.toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
+
+               </Card>
+
+                {message.sender === "user" && (
+                  <Avatar className="h-8 w-8 mt-1">
+                    <AvatarFallback className="bg-gray-600 text-white text-xs font-medium">
+                      U
+                    </AvatarFallback>
+                  </Avatar>
+                )}
+              </div>
+            ))}
+          </div>
+        </ScrollArea>
 
           <div className="w-full mx-auto">
             <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-sm focus-within:shadow-md transition-shadow">
