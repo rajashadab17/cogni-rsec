@@ -4,42 +4,32 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import {
-    Check,
-    Copy,
-    Loader2,
-    Paperclip,
-    Plus,
-    Send,
-    X
-} from "lucide-react";
+import { Check, Copy, Loader2, Paperclip, Plus, Send, X } from "lucide-react";
 import type React from "react";
 import { JSX, useRef, useState } from "react";
-
-
 
 export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
-      title:"New Chat",
+      title: "New Chat",
       content:
         "Assalam-o-Alaikum! 🌟 I’m ShadBot — your smart (and slightly overconfident 😅) assistant. I may not know your secrets, but I sure know a lot of facts 🤓. Let’s see if I can impress you — what’s your first question?",
 
@@ -60,12 +50,11 @@ export default function Chat() {
       type: uf.file.type,
       preview: uf.preview,
       timestamp: new Date(),
-
     }));
 
     const newMessage: Message = {
       id: Date.now().toString(),
-      title:"New Chat",
+      title: "New Chat",
       content: inputValue,
       sender: "user",
       timestamp: new Date(),
@@ -78,7 +67,7 @@ export default function Chat() {
     const aiMessageId = (Date.now() + 1).toString();
     const aiMessage: Message = {
       id: aiMessageId,
-      title:"New Chat",
+      title: "New Chat",
       content: "",
       sender: "ai",
       timestamp: new Date(),
@@ -91,69 +80,75 @@ export default function Chat() {
     setInputValue("");
     setUploadedFiles([]);
 
+    const userEmail = "sda@gmail.com";
     try {
       console.log("Starting API call...");
-
-      const response = await fetch("/api/chat", {
+      await fetch(`/api/user/${encodeURIComponent(userEmail)}/chat`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          messages: [{ role: "user", content: currentInput }],
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newMessage),
       });
 
-      console.log("Response received:", response);
+      // const response = await fetch("/api/chat", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify({
+      //     messages: [{ role: "user", content: currentInput }],
+      //   }),
+      // });
 
-      if (!response.body) throw new Error("No response body");
+      // console.log("Response received:", response);
 
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
+      // if (!response.body) throw new Error("No response body");
 
-      let accumulatedContent = "";
-      let isFirstChunk = true;
+      // const reader = response.body.getReader();
+      // const decoder = new TextDecoder();
 
-      while (true) {
-        const { done, value } = await reader.read();
+      // let accumulatedContent = "";
+      // let isFirstChunk = true;
 
-        console.log("Chunk received:", {
-          done,
-          value,
-          decoded: value ? decoder.decode(value, { stream: true }) : null,
-        });
+      // while (true) {
+      //   const { done, value } = await reader.read();
 
-        if (done) {
-          console.log("Stream completed, final content:", accumulatedContent);
+      //   console.log("Chunk received:", {
+      //     done,
+      //     value,
+      //     decoded: value ? decoder.decode(value, { stream: true }) : null,
+      //   });
 
-          setMessages((prev) =>
-            prev.map((msg) =>
-              msg.id === aiMessageId ? { ...msg, isStreaming: false } : msg
-            )
-          );
-          break;
-        }
+      //   if (done) {
+      //     console.log("Stream completed, final content:", accumulatedContent);
 
-        const chunk = decoder.decode(value, { stream: true });
-        console.log("Decoded chunk:", chunk);
+      //     setMessages((prev) =>
+      //       prev.map((msg) =>
+      //         msg.id === aiMessageId ? { ...msg, isStreaming: false } : msg
+      //       )
+      //     );
+      //     break;
+      //   }
 
-        accumulatedContent += chunk;
-        console.log("Accumulated content:", accumulatedContent);
+      //   const chunk = decoder.decode(value, { stream: true });
+      //   console.log("Decoded chunk:", chunk);
 
-        setMessages((prev) =>
-          prev.map((msg) =>
-            msg.id === aiMessageId
-              ? {
-                  ...msg,
-                  content: accumulatedContent,
-                  isStreaming: isFirstChunk ? false : msg.isStreaming,
-                }
-              : msg
-          )
-        );
+      //   accumulatedContent += chunk;
+      //   console.log("Accumulated content:", accumulatedContent);
 
-        isFirstChunk = false;
-      }
+      //   setMessages((prev) =>
+      //     prev.map((msg) =>
+      //       msg.id === aiMessageId
+      //         ? {
+      //             ...msg,
+      //             content: accumulatedContent,
+      //             isStreaming: isFirstChunk ? false : msg.isStreaming,
+      //           }
+      //         : msg
+      //     )
+      //   );
+
+      //   isFirstChunk = false;
+      // }
     } catch (err) {
       console.error("Streaming error:", err);
 
@@ -161,7 +156,7 @@ export default function Chat() {
 
       const errorMessage: Message = {
         id: (Date.now() + 2).toString(),
-        title:"New Chat",
+        title: "New Chat",
         content:
           "Sorry, there was an error processing your request. Please try again.",
         sender: "ai",
