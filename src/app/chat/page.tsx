@@ -89,66 +89,74 @@ export default function Chat() {
         body: JSON.stringify(newMessage),
       });
 
-      // const response = await fetch("/api/chat", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify({
-      //     messages: [{ role: "user", content: currentInput }],
-      //   }),
-      // });
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          messages: [{ role: "user", content: currentInput }],
+        }),
+      });
 
       // console.log("Response received:", response);
 
-      // if (!response.body) throw new Error("No response body");
+      if (!response.body) throw new Error("No response body");
 
-      // const reader = response.body.getReader();
-      // const decoder = new TextDecoder();
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
 
-      // let accumulatedContent = "";
-      // let isFirstChunk = true;
+      let accumulatedContent = "";
+      let isFirstChunk = true;
 
-      // while (true) {
-      //   const { done, value } = await reader.read();
+      while (true) {
+        const { done, value } = await reader.read();
 
-      //   console.log("Chunk received:", {
-      //     done,
-      //     value,
-      //     decoded: value ? decoder.decode(value, { stream: true }) : null,
-      //   });
+        // console.log("Chunk received:", {
+        //   done,
+        //   value,
+        //   decoded: value ? decoder.decode(value, { stream: true }) : null,
+        // });
 
-      //   if (done) {
-      //     console.log("Stream completed, final content:", accumulatedContent);
+        if (done) {
+          // console.log("Stream completed, final content:", accumulatedContent);
 
-      //     setMessages((prev) =>
-      //       prev.map((msg) =>
-      //         msg.id === aiMessageId ? { ...msg, isStreaming: false } : msg
-      //       )
-      //     );
-      //     break;
-      //   }
+          setMessages((prev) =>
+            prev.map((msg) =>
+              msg.id === aiMessageId ? { ...msg, isStreaming: false } : msg
+            )
+          );
+          break;
+        }
 
-      //   const chunk = decoder.decode(value, { stream: true });
-      //   console.log("Decoded chunk:", chunk);
+        const chunk = decoder.decode(value, { stream: true });
+        // console.log("Decoded chunk:", chunk);
 
-      //   accumulatedContent += chunk;
-      //   console.log("Accumulated content:", accumulatedContent);
+        accumulatedContent += chunk;
+        // console.log("Accumulated content:", accumulatedContent);
 
-      //   setMessages((prev) =>
-      //     prev.map((msg) =>
-      //       msg.id === aiMessageId
-      //         ? {
-      //             ...msg,
-      //             content: accumulatedContent,
-      //             isStreaming: isFirstChunk ? false : msg.isStreaming,
-      //           }
-      //         : msg
-      //     )
-      //   );
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === aiMessageId
+              ? {
+                  ...msg,
+                  content: accumulatedContent,
+                  isStreaming: isFirstChunk ? false : msg.isStreaming,
+                }
+              : msg
+          )
+        );
 
-      //   isFirstChunk = false;
-      // }
+        isFirstChunk = false;
+      }
+      aiMessage.content = accumulatedContent
+      await fetch(`/api/user/${encodeURIComponent(userEmail)}/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(aiMessage),
+      });
+
+      console.log({aiMessage})
     } catch (err) {
       console.error("Streaming error:", err);
 
