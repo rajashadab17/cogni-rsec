@@ -108,7 +108,88 @@ export default function Chat() {
     setInputValue("");
     setUploadedFiles([]);
 
-    
+    try {
+      console.log("Starting API call..."); // Debug log
+
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          messages: [{ role: "user", content: currentInput }],
+        }),
+      });
+
+      console.log("Response received:", response); // Debug log
+
+      if (!response.body) throw new Error("No response body");
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+
+      // Use a separate variable to accumulate content
+      let accumulatedContent = "";
+      let isFirstChunk = true; // Track if this is the first chunk
+
+      while (true) {
+        const { done, value } = await reader.read();
+
+        console.log("Chunk received:", {
+          done,
+          value,
+          decoded: value ? decoder.decode(value, { stream: true }) : null,
+        }); // Debug log
+
+        if (done) {
+          console.log("Stream completed, final content:", accumulatedContent); // Debug log
+          // Ensure animation is stopped when stream is done
+          setMessages((prev) =>
+            prev.map((msg) =>
+              msg.id === aiMessageId ? { ...msg, isStreaming: false } : msg
+            )
+          );
+          break;
+        }
+
+        const chunk = decoder.decode(value, { stream: true });
+        console.log("Decoded chunk:", chunk); // Debug log
+
+        accumulatedContent += chunk;
+        console.log("Accumulated content:", accumulatedContent); // Debug log
+
+        // Stop animation on FIRST token received
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === aiMessageId
+              ? {
+                  ...msg,
+                  content: accumulatedContent,
+                  isStreaming: isFirstChunk ? false : msg.isStreaming, // Stop animation on first chunk
+                }
+              : msg
+          )
+        );
+
+        // Mark that we've received the first chunk
+        isFirstChunk = false;
+      }
+    } catch (err) {
+      console.error("Streaming error:", err);
+
+      setMessages((prev) => prev.filter((msg) => msg.id !== aiMessageId));
+
+      const errorMessage: Message = {
+        id: (Date.now() + 2).toString(),
+        content:
+          "Sorry, there was an error processing your request. Please try again.",
+        sender: "ai",
+        timestamp: new Date(),
+        isStreaming: false,
+      };
+
+      setMessages((prev) => [...prev, errorMessage]);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
