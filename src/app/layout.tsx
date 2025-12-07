@@ -22,7 +22,6 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
-import { NavActions } from "@/components/nav-actions";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -104,9 +103,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
                         </BreadcrumbList>
                       </Breadcrumb>
                     </div>
-                    <div className="ml-auto px-3">
+                    {/* <div className="ml-auto px-3">
                       <NavActions />
-                    </div>
+                    </div> */}
                   </header>
                   {children}
                 </SidebarInset>

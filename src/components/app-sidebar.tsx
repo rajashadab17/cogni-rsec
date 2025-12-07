@@ -147,22 +147,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavProjects projects={data.projects} />
       </SidebarContent>
       <SidebarFooter>
-        {/* <TeamSwitcher teams={data.teams} /> */}
         <ThemeToggle TypeButton={true}/>
-        {/* <SidebarMenuButton
-              size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-            >
-              <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                {/* <activeTeam.logo className="size-4" /> 
-              </div>
-              <SidebarTrigger  />
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">hh</span>
-                <span className="truncate text-xs">bhk</span>
-              </div>
-              <ChevronsUpDown className="ml-auto" />
-            </SidebarMenuButton> */}
         <NavUser user={data.user} />
       </SidebarFooter>
       <SidebarRail />
