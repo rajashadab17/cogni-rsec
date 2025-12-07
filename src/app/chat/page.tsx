@@ -1,5 +1,7 @@
-"use client"
+"use client";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Send } from "lucide-react";
 import React, { useState } from "react";
 
 const page = () => {
@@ -38,6 +40,13 @@ const page = () => {
                     className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none text-sm bg-transparent! placeholder:text-gray-500 dark:placeholder:text-gray-400"
                   />
                 </div>
+                <Button
+                  onClick={handleSendMessage}
+                  size="icon"
+                  className="h-8 w-8 rounded-lg bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 text-gray-600 disabled:text-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 dark:disabled:bg-gray-800 dark:text-gray-300 dark:disabled:text-gray-500 flex-shrink-0"
+                >
+                  <Send className="h-4 w-4" />
+                </Button>
               </div>
             </div>
           </div>
