@@ -401,6 +401,13 @@ const page = () => {
             CogniQuery AI can make mistakes. Check important info.
           </p>
           </div>
+          <input
+          ref={fileInputRef}
+          type="file"
+          className="hidden"
+          onChange={handleFileChange}
+          accept="image/*,text/*,.pdf,.doc,.docx"
+        />
         </div>
       </div>
     </>
