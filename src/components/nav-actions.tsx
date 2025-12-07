@@ -31,7 +31,7 @@ import {
   User
 } from "lucide-react";
 import * as React from "react";
-import { ModeToggle } from "./mode-toggle";
+import { ModeToggle } from "./theme-toggle";
 import { SettingsDialog } from "./setting-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
