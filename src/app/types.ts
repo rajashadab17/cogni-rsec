@@ -2,6 +2,7 @@ interface MessageFile {
   name: string;
   type: string;
   preview?: string;
+  timestamp: Date;
 }
 
 interface Message {

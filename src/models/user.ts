@@ -1,4 +1,5 @@
 import { Document, Model, model, Schema } from "mongoose";
+import { messageSchema } from "./MessageSchema";
 
 
 
@@ -36,7 +37,8 @@ const userSchema: Schema<IUser> = new Schema(
       required: true,
     },
     ChatHistory: {
-      
+      type: [messageSchema],
+      default: []
     }
   },
   { timestamps: true }

@@ -59,6 +59,8 @@ export default function Chat() {
       name: uf.file.name,
       type: uf.file.type,
       preview: uf.preview,
+      timestamp: new Date(),
+
     }));
 
     const newMessage: Message = {

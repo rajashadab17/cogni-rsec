@@ -1,4 +1,5 @@
 import { Schema } from "mongoose";
+import { messageFileSchema } from "./MessageFileSchema";
 
 export const messageSchema = new Schema<Message>(
   {
@@ -7,8 +8,8 @@ export const messageSchema = new Schema<Message>(
     content: { type: String, required: true },
     sender: { type: String, enum: ["user", "ai"], required: true },
     timestamp: { type: Date, required: true },
-    files: { type: [MessageFile], default: [] }, // or define a MessageFile schema if you want
+    files: { type: [messageFileSchema], default: [] },
     isStreaming: { type: Boolean, required: true },
   },
-  { _id: false } // optional: prevents creating an automatic _id for each message
+  { _id: false } 
 );
