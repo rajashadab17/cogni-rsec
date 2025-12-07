@@ -279,6 +279,22 @@ const page = () => {
     }
   };
 
+  const [Model, setModel] = useState<string>();
+
+  const models = [
+    { Model: "DeepSeek v3.1:free", Api: "deepseek/deepseek-chat-v3.1:free" },
+    {
+      Model: "llama v3.1-8b-instruct:free",
+      Api: "meta-llama/llama-3.1-8b-instruct:free",
+    },
+    {
+      Model: "Mistral v7b-instruct:free",
+      Api: "mistralai/mistral-7b-instruct:free",
+    },
+    { Model: "GPT Oss-120b:free", Api: "openai/gpt-oss-120b:free" },
+    { Model: "GPT v3.5 Turbo-16k", Api: "openai/gpt-3.5-turbo-16k" },
+  ];
+
 
   return (
     <>
