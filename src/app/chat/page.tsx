@@ -99,8 +99,6 @@ export default function Chat() {
         }),
       });
 
-      // console.log("Response received:", response);
-
       if (!response.body) throw new Error("No response body");
 
       const reader = response.body.getReader();
@@ -112,15 +110,7 @@ export default function Chat() {
       while (true) {
         const { done, value } = await reader.read();
 
-        // console.log("Chunk received:", {
-        //   done,
-        //   value,
-        //   decoded: value ? decoder.decode(value, { stream: true }) : null,
-        // });
-
         if (done) {
-          // console.log("Stream completed, final content:", accumulatedContent);
-
           setMessages((prev) =>
             prev.map((msg) =>
               msg.id === aiMessageId ? { ...msg, isStreaming: false } : msg
@@ -130,10 +120,8 @@ export default function Chat() {
         }
 
         const chunk = decoder.decode(value, { stream: true });
-        // console.log("Decoded chunk:", chunk);
 
         accumulatedContent += chunk;
-        // console.log("Accumulated content:", accumulatedContent);
 
         setMessages((prev) =>
           prev.map((msg) =>
@@ -149,14 +137,14 @@ export default function Chat() {
 
         isFirstChunk = false;
       }
-      aiMessage.content = accumulatedContent
+      aiMessage.content = accumulatedContent;
       await fetch(`/api/user/${encodeURIComponent(userEmail)}/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(aiMessage),
       });
 
-      console.log({aiMessage})
+      console.log({ aiMessage });
     } catch (err) {
       console.error("Streaming error:", err);
 
