@@ -251,6 +251,35 @@ const page = () => {
     });
   };
 
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch (err) {
+      // Fallback for older browsers
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+      return true;
+    }
+  };
+
+  // Add this state in your component
+  const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
+
+  // Copy handler function
+  const handleCopy = async (messageId: string, content: string) => {
+    const success = await copyToClipboard(content);
+    if (success) {
+      setCopiedMessageId(messageId);
+      setTimeout(() => setCopiedMessageId(null), 2000); // Reset after 2 seconds
+    }
+  };
+
+
   return (
     <>
       <div className="flex h-auto w-full bg-white dark:bg-gray-900">
