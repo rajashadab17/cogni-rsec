@@ -122,9 +122,6 @@ export default function Chat() {
     setUploadedFiles([]);
 
     try {
-      // await apiClient.SaveTitle(id, title); messages.length ==1
-      // await apiClient.Prompt(userEmail, userMessage);
-      // await apiClient.UpdateChatHistory(userEmail, userMessage);
       await apiClient.SaveChat(userEmail, Chat_Id, userMessage)
 
       const response = await apiClient.Prompt(currentInput, Model);
@@ -161,10 +158,6 @@ export default function Chat() {
         content: accumulatedContent,
       })
       
-      // await apiClient.UpdateChatHistory(userEmail, {
-      //   ...aiMessage,
-      //   content: accumulatedContent,
-      // });
     } catch (err) {
       console.error("Streaming error:", err);
       setMessages((prev) => prev.filter((msg) => msg.id !== aiMessageId));
@@ -421,9 +414,9 @@ export default function Chat() {
                 style={{ animationDelay: `${index * 100}ms` }}
               >
                 {message.sender === "ai" && (
-                  <Avatar className="h-8 w-16  mt-1">
+                  <Avatar className="h-8 w-18  mt-1">
                     <AvatarFallback className="bg-green-500 text-white text-xs font-medium">
-                      ShadBot
+                      CogniQuery
                     </AvatarFallback>
                   </Avatar>
                 )}

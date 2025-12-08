@@ -13,7 +13,7 @@ export async function POST(req: Request, { params }: any) {
       { Chat_Id },
       {
         $push: { Chat: userMessage },
-        $setOnInsert: { Chat_Id } // ensures Chat_Id is set for new docs
+        $setOnInsert: { Chat_Id } 
       },
       { new: true, upsert: true }
     );
