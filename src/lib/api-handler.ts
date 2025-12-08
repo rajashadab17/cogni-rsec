@@ -67,6 +67,14 @@ class ApiClient {
       }),
     });
   }
+
+  async UpdateChatHistory(userEmail: string, userMessage: Message): Promise<Response> {
+    return fetch(`/api/user/${encodeURIComponent(userEmail)}/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userMessage),
+      });
+  }
 }
 
 export const apiClient = new ApiClient();

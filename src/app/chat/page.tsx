@@ -113,11 +113,7 @@ export default function Chat() {
     setUploadedFiles([]);
 
     try {
-      await fetch(`/api/user/${encodeURIComponent(userEmail)}/chat`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(userMessage),
-      });
+      await apiClient.UpdateChatHistory(userEmail,userMessage)
 
       const response = await apiClient.Prompt(currentInput, Model);
 
@@ -149,11 +145,7 @@ export default function Chat() {
         )
       );
 
-      await fetch(`/api/user/${encodeURIComponent(userEmail)}/chat`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...aiMessage, content: accumulatedContent }),
-      });
+      await apiClient.UpdateChatHistory(userEmail,{ ...aiMessage, content: accumulatedContent });
     } catch (err) {
       console.error("Streaming error:", err);
       setMessages((prev) => prev.filter((msg) => msg.id !== aiMessageId));
