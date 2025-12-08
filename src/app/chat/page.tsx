@@ -23,7 +23,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Check, Copy, Loader2, Paperclip, Plus, Send, X } from "lucide-react";
 import type React from "react";
-import { JSX, useRef, useState } from "react";
+import { JSX, useEffect, useRef, useState } from "react";
 
 export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([
@@ -42,6 +42,14 @@ export default function Chat() {
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [Model, setModel] = useState<string>();
+  const [userEmail, setUserEmail] = useState("")
+
+  useEffect(() => {
+    const userDataEmail = localStorage.getItem("userEmail");
+    if (userDataEmail) {
+      setUserEmail(userDataEmail);
+    }
+  }, [])
 
   const handleSendMessage = async () => {
     if (!inputValue.trim() && uploadedFiles.length === 0) return;

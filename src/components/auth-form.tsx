@@ -117,7 +117,9 @@ export default function AuthForm({ ShowPage }: AuthFormProps) {
             title: "Success",
             description: "You have successfully logged in!",
           });
-          router.push("/dashboard");
+          localStorage.setItem("userName", UserDataRequest.user.username)
+          localStorage.setItem("userEmail", UserDataRequest.user.userEmail)
+          router.push("/chat");
         } else {
           toast.warning({
             title: "Warning",
