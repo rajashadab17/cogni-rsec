@@ -43,14 +43,14 @@ export default function Chat() {
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [Model, setModel] = useState<string>("");
-  const [userEmail, setUserEmail] = useState("")
+  const [userEmail, setUserEmail] = useState("");
 
   useEffect(() => {
     const userDataEmail = localStorage.getItem("userEmail");
     if (userDataEmail) {
       setUserEmail(userDataEmail);
     }
-  }, [])
+  }, []);
 
   const handleSendMessage = async () => {
     if (!inputValue.trim() && uploadedFiles.length === 0) return;
@@ -113,7 +113,7 @@ export default function Chat() {
     setUploadedFiles([]);
 
     try {
-      await apiClient.UpdateChatHistory(userEmail,userMessage)
+      await apiClient.UpdateChatHistory(userEmail, userMessage);
 
       const response = await apiClient.Prompt(currentInput, Model);
 
@@ -145,7 +145,10 @@ export default function Chat() {
         )
       );
 
-      await apiClient.UpdateChatHistory(userEmail,{ ...aiMessage, content: accumulatedContent });
+      await apiClient.UpdateChatHistory(userEmail, {
+        ...aiMessage,
+        content: accumulatedContent,
+      });
     } catch (err) {
       console.error("Streaming error:", err);
       setMessages((prev) => prev.filter((msg) => msg.id !== aiMessageId));
@@ -214,7 +217,18 @@ export default function Chat() {
 
   const messageFormatter = (text: string): JSX.Element[] => {
     console.log(text);
-    const lines = text.replace(/\r\n|\r/g, "\n").split("\n");
+    const lines = text
+      .replace(/\r\n|\r/g, "\n")
+      .replace(/<s>/g, "")
+      .replace(/<\/s>/g, "")
+      .replace(/\[OUT\]/g, "")
+      .replace(/\[\/OUT\]/g, "")
+      .replace(/\[INST\]/g, "")
+      .replace(/\[\/INST\]/g, "")
+      .replace(/<\/?think>/gi, "")
+      .trim()
+      .split("\n");
+
     const elements: JSX.Element[] = [];
     let currentList: JSX.Element[] = [];
     let inCodeBlock = false;
@@ -353,8 +367,6 @@ export default function Chat() {
       setTimeout(() => setCopiedMessageId(null), 2000);
     }
   };
-
-  
 
   const models = [
     { Model: "DeepSeek v3.1:free", Api: "deepseek/deepseek-chat-v3.1:free" },
