@@ -1,4 +1,5 @@
-export interface IUser {
+
+interface IUser {
   username: string;
   userEmail: string;
   password: string;
@@ -7,19 +8,18 @@ export interface IUser {
   updatedAt: Date;
   // ChatHistory: Message []
 }
-
 interface ChatHistory {
   userEmail:string;
   ChatHistory: ChatTitle []
 }
 
-interface ChatTitle {
+ interface ChatTitle {
   title: string;
   timestamp: Date;
   Chat_Id: string
 }
 
-interface Chat {
+ interface Chat {
   Chat_Id: string;
   userEmail: string;
   Chat: Message [];

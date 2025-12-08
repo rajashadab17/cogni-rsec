@@ -1,6 +1,5 @@
 import { Document, Model, model, Schema } from "mongoose";
 import { messageSchema } from "./MessageSchema";
-import { IUser } from "@/app/types";
 
 const userSchema: Schema<IUser> = new Schema(
   {

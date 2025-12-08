@@ -1,11 +1,14 @@
-import { Schema } from "mongoose";
-import { ChatHistoryTitleSchema } from "./ChatHistroyTitle";
+import { Model, model, Schema } from "mongoose";
+import { ChatHistoryTitleSchema } from "./ChatTitleSchema";
 
-export const ChatHistorySchema = new Schema(
+export const ChatHistorySchema = new Schema<ChatHistory>(
   {
     userEmail: { type: String, required: true },
     ChatHistory: {type: [ChatHistoryTitleSchema], default: []},
-    timestamp: { type: Date, required: true },
   },
   { _id: false }
 );
+
+const ChatHistoryModel: Model<ChatHistory> = model<ChatHistory>("ChatHistory", ChatHistorySchema);
+
+export default ChatHistoryModel;
