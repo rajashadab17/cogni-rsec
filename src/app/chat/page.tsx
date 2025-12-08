@@ -52,6 +52,7 @@ export default function Chat() {
     }
   }, []);
 
+  let Chat_Id = `${Date.now()}-${crypto.randomUUID()}`
   const handleSendMessage = async () => {
     if (!inputValue.trim() && uploadedFiles.length === 0) return;
 
@@ -72,7 +73,7 @@ export default function Chat() {
         console.log({ generatedTitle });
 
         const TitleObj: ChatTitle = {
-          Chat_Id: `${Date.now()}-${crypto.randomUUID()}`,
+          Chat_Id,
           title: generatedTitle,
           timestamp: new Date(),
         };
@@ -124,6 +125,7 @@ export default function Chat() {
       // await apiClient.SaveTitle(id, title); messages.length ==1
       // await apiClient.Prompt(userEmail, userMessage);
       // await apiClient.UpdateChatHistory(userEmail, userMessage);
+      await apiClient.SaveChat(userEmail, Chat_Id, userMessage)
 
       const response = await apiClient.Prompt(currentInput, Model);
 
@@ -154,7 +156,11 @@ export default function Chat() {
           msg.id === aiMessageId ? { ...msg, isStreaming: false } : msg
         )
       );
-
+      await apiClient.SaveChat(userEmail, Chat_Id, {
+        ...aiMessage,
+        content: accumulatedContent,
+      })
+      
       // await apiClient.UpdateChatHistory(userEmail, {
       //   ...aiMessage,
       //   content: accumulatedContent,

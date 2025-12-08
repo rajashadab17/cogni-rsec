@@ -83,6 +83,14 @@ class ApiClient {
         body: JSON.stringify(titleObj),
       });
   }
+
+  async SaveChat (userEmail:string, Chat_Id:string,  userMessage: Message){
+    return fetch(`/api/user/chat/${encodeURIComponent(Chat_Id)}/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userMessage),
+      });
+  }
 }
 
 export const apiClient = new ApiClient();

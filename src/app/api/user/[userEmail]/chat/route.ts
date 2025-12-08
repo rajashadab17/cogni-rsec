@@ -12,11 +12,6 @@ export async function POST(req: Request, { params }: any) {
 
   try {
     const requiredUser = await User.findOne({ userEmail });
-    // const updatedUser = await User.findOneAndUpdate(
-    //   { userEmail },
-    //   { $push: { ChatHistory: message } },
-    //   { new: true }
-    // );
 
     if (!requiredUser) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
