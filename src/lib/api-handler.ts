@@ -75,6 +75,14 @@ class ApiClient {
         body: JSON.stringify(userMessage),
       });
   }
+
+  async SaveTitle (title:string, Chat_Id:string, userEmail:string){
+    return fetch(`/api/user/${encodeURIComponent(userEmail)}}/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({title, Chat_Id, userEmail}),
+      });
+  }
 }
 
 export const apiClient = new ApiClient();

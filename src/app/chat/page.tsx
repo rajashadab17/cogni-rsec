@@ -113,6 +113,9 @@ export default function Chat() {
     setUploadedFiles([]);
 
     try {
+      
+      // await apiClient.SaveTitle(id, title); messages.length ==1
+      // await apiClient.Prompt(userEmail, userMessage);
       await apiClient.UpdateChatHistory(userEmail, userMessage);
 
       const response = await apiClient.Prompt(currentInput, Model);
