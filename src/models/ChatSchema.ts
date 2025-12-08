@@ -12,6 +12,6 @@ export const ChatHistorySchema = new Schema<Chat>(
   { _id: false }
 );
 
-const ChatModel: Model<Chat> = model<Chat>("ChatHistory", ChatHistorySchema);
+const ChatModel: Model<Chat> = model<Chat>("Chat", ChatHistorySchema);
 
 export default ChatModel;
