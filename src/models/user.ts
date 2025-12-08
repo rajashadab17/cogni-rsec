@@ -1,17 +1,6 @@
 import { Document, Model, model, Schema } from "mongoose";
 import { messageSchema } from "./MessageSchema";
-
-
-
-export interface IUser extends Document {
-  username: string;
-  userEmail: string;
-  password: string;
-  confirmPassword: string;
-  createdAt: Date;
-  updatedAt: Date;
-  ChatHistory: Message []
-}
+import { IUser } from "@/app/types";
 
 const userSchema: Schema<IUser> = new Schema(
   {
@@ -36,10 +25,10 @@ const userSchema: Schema<IUser> = new Schema(
       type: String,
       required: true,
     },
-    ChatHistory: {
-      type: [messageSchema],
-      default: []
-    }
+    // ChatHistory: {
+    //   type: [messageSchema],
+    //   default: []
+    // }
   },
   { timestamps: true }
 );
