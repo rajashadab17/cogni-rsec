@@ -57,6 +57,16 @@ class ApiClient {
     });
   }
 
+  async Prompt(content: string, Model: string): Promise<Response> {
+    return fetch(`${this.baseURL}/chat`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        messages: [{ role: "user", content }],
+        Model,
+      }),
+    });
+  }
 }
 
 export const apiClient = new ApiClient();

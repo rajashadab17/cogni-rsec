@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { apiClient } from "@/lib/api-handler";
 import { cn } from "@/lib/utils";
 import { Check, Copy, Loader2, Paperclip, Plus, Send, X } from "lucide-react";
 import type React from "react";
@@ -41,7 +42,7 @@ export default function Chat() {
   const [inputValue, setInputValue] = useState("");
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [Model, setModel] = useState<string>();
+  const [Model, setModel] = useState<string>("");
   const [userEmail, setUserEmail] = useState("")
 
   useEffect(() => {
@@ -111,8 +112,6 @@ export default function Chat() {
     setInputValue("");
     setUploadedFiles([]);
 
-    const userEmail = "sda@gmail.com";
-
     try {
       await fetch(`/api/user/${encodeURIComponent(userEmail)}/chat`, {
         method: "POST",
@@ -120,14 +119,7 @@ export default function Chat() {
         body: JSON.stringify(userMessage),
       });
 
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          messages: [{ role: "user", content: currentInput }],
-          Model
-        }),
-      });
+      const response = await apiClient.Prompt(currentInput, Model);
 
       if (!response.body) throw new Error("No response body");
 
