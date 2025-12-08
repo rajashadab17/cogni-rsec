@@ -76,11 +76,11 @@ class ApiClient {
       });
   }
 
-  async SaveTitle (title:string, Chat_Id:string, userEmail:string){
-    return fetch(`/api/user/${encodeURIComponent(userEmail)}}/chat`, {
+  async SaveTitle (titleObj: ChatTitle, userEmail:string){
+    return fetch(`/api/user/${encodeURIComponent(userEmail)}/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({title, Chat_Id, userEmail}),
+        body: JSON.stringify(titleObj),
       });
   }
 }

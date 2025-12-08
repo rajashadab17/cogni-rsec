@@ -70,6 +70,14 @@ export default function Chat() {
         const titleData = await titleResp.json();
         generatedTitle = titleData.title || "New Chat";
         console.log({ generatedTitle });
+
+        const TitleObj: ChatTitle = {
+          Chat_Id: `${Date.now()}-${crypto.randomUUID()}`,
+          title: generatedTitle,
+          timestamp: new Date(),
+        };
+
+        await apiClient.SaveTitle(TitleObj, userEmail)
       } catch (err) {
         console.error("Title generation failed:", err);
       }
@@ -113,10 +121,9 @@ export default function Chat() {
     setUploadedFiles([]);
 
     try {
-      
       // await apiClient.SaveTitle(id, title); messages.length ==1
       // await apiClient.Prompt(userEmail, userMessage);
-      await apiClient.UpdateChatHistory(userEmail, userMessage);
+      // await apiClient.UpdateChatHistory(userEmail, userMessage);
 
       const response = await apiClient.Prompt(currentInput, Model);
 
@@ -148,10 +155,10 @@ export default function Chat() {
         )
       );
 
-      await apiClient.UpdateChatHistory(userEmail, {
-        ...aiMessage,
-        content: accumulatedContent,
-      });
+      // await apiClient.UpdateChatHistory(userEmail, {
+      //   ...aiMessage,
+      //   content: accumulatedContent,
+      // });
     } catch (err) {
       console.error("Streaming error:", err);
       setMessages((prev) => prev.filter((msg) => msg.id !== aiMessageId));
