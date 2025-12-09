@@ -232,6 +232,7 @@ export default function Chat() {
       .replace(/\r\n|\r/g, "\n")
       .replace(/<s>/g, "")
       .replace(/<\/s>/g, "")
+      .replace(/\[\/s\>/g, "")
       .replace(/\[OUT\]/g, "")
       .replace(/\[\/OUT\]/g, "")
       .replace(/\[INST\]/g, "")
