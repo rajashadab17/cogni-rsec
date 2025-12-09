@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -34,7 +34,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-
 interface RootLayoutProps {
   children: ReactNode;
 }
@@ -44,26 +43,27 @@ export default function RootLayout({ children }: RootLayoutProps) {
   const authPaths = ["/", "/signin", "/signup"];
   const showSidebar = !authPaths.includes(pathname);
   const PathNameArray = pathname.split("/").filter(Boolean);
-  const [chatHistory, setChatHistory] = useState<ChatHistory []>([]);
+  const [chatHistory, setChatHistory] = useState<ChatTitle[] | null>(null);
 
-useEffect(() => {
-  const storedUserEmail = localStorage.getItem("userEmail");
+  useEffect(() => {
+    const storedUserEmail = localStorage.getItem("userEmail");
 
-  const loadChatHistory = async () => {
-    try {
-      const response = await apiClient.fetchChatHistory(storedUserEmail!);
-      const data = await response.json();
+    const loadChatHistory = async () => {
+      try {
+        const response = await apiClient.fetchChatHistory(storedUserEmail!);
+        const data = await response.json();
 
-      const chatHistoryDocument = data.chatHistoryDoc; 
-      setChatHistory(chatHistoryDocument?.ChatHistory || []);
-    } catch (error) {
-      console.error("Failed to fetch chat history:", error);
-    }
-  };
+        const chatHistoryDocument = data.chatHistoryDoc;
+        if (chatHistoryDocument) {
+          setChatHistory(chatHistoryDocument.ChatHistory); 
+        }
+      } catch (error) {
+        console.error("Failed to fetch chat history:", error);
+      }
+    };
 
-  loadChatHistory();
-}, []);
-
+    loadChatHistory();
+  }, []);
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -80,8 +80,9 @@ useEffect(() => {
             <Toaster position="top-right" closeButton />
             {showSidebar ? (
               <SidebarProvider>
-                <AppSidebar History={chatHistory}/>
-                  {children}
+                <AppSidebar History={chatHistory ?? []} />
+
+                {children}
               </SidebarProvider>
             ) : (
               children

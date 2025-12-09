@@ -64,8 +64,9 @@ const data = {
 }
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
-  History: ChatHistory[];
+  History: ChatTitle[]; 
 }
+
 
 export function AppSidebar({ History, ...props }: AppSidebarProps) {
   return (
