@@ -35,21 +35,21 @@ export function SidebarHistory({
 }) {
   const { isMobile } = useSidebar()
 
-  const [chatHistory, setChatHistory] = useState<ChatTitle[] | null>(null);
+  const [chat, setChat] = useState<ChatTitle[] | null>(null);
   
   
       const loadChat = async (Chat_Id:string) => {
-        // try {
-        //   const response = await apiClient.fetchChat(Chat_Id!);
-        //   const data = await response.json();
-  
-        //   const chatHistoryDocument = data.chatHistoryDoc;
-        //   if (chatHistoryDocument) {
-        //     setChatHistory(chatHistoryDocument.ChatHistory); 
-        //   }
-        // } catch (error) {
-        //   console.error("Failed to fetch chat history:", error);
-        // }
+        try {
+          const response = await apiClient.fetchChat(Chat_Id!);
+          const data = await response.json();
+          console.log(data)
+          const chatDocument = data.ChatDoc;
+          if (chatDocument) {
+            setChat(chatDocument.ChatHistory); 
+          }
+        } catch (error) {
+          console.error("Failed to fetch chat history:", error);
+        }
       };
 
   
