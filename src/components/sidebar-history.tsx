@@ -1,13 +1,16 @@
 "use client";
 
 import {
-  History
+  History,
+  MoreHorizontal,
+  Trash2
 } from "lucide-react";
 
 import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
+  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar
@@ -15,6 +18,7 @@ import {
 import { useChat } from "@/context/chat-context";
 import { apiClient } from "@/lib/api-handler";
 import { useState } from "react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 
 export function SidebarHistory() {
   const { isMobile } = useSidebar();
@@ -54,6 +58,24 @@ export function SidebarHistory() {
                 <span>{chat.title}</span>
               </a>
             </SidebarMenuButton>
+             <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <SidebarMenuAction showOnHover>
+                  <MoreHorizontal />
+                  <span className="sr-only">More</span>
+                </SidebarMenuAction>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                className="w-48 rounded-lg"
+                side={isMobile ? "bottom" : "right"}
+                align={isMobile ? "end" : "start"}
+              >
+                <DropdownMenuItem>
+                  <Trash2 className="text-muted-foreground" />
+                  <span>Delete Project</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </SidebarMenuItem>
         ))}
         {/* <SidebarMenuItem>
