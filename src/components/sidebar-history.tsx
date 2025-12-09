@@ -1,47 +1,36 @@
 "use client";
 
 import {
-  Folder,
-  Forward,
-  History,
-  MoreHorizontal,
-  Trash2,
-  type LucideIcon,
+  History
 } from "lucide-react";
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
+  useSidebar
 } from "@/components/ui/sidebar";
+import { useChat } from "@/context/chat-context";
 import { apiClient } from "@/lib/api-handler";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-export function SidebarHistory({ history }: { history: ChatTitle[] }) {
+export function SidebarHistory() {
   const { isMobile } = useSidebar();
 
-  const [chat, setChat] = useState<ChatTitle[] | null>(null);
-  
+  const {  chatHistory, setChats } = useChat();
 
   const loadChat = async (Chat_Id: string) => {
     try {
       const response = await apiClient.fetchChat(Chat_Id!);
       const data = await response.json();
-      console.log(data);
-      const chatDocument = data.ChatDoc;
+      // console.log(data);
+      const chatDocument = data.chatDoc;
+      // console.log("chat doc ",data.chatDoc)
+      // console.log("chat doc chat",chatDocument.Chat)
       if (chatDocument) {
-        setChat(chatDocument.ChatHistory);
+        setChats(chatDocument.Chat);
       }
     } catch (error) {
       console.error("Failed to fetch chat history:", error);
@@ -52,7 +41,7 @@ export function SidebarHistory({ history }: { history: ChatTitle[] }) {
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Discussed History</SidebarGroupLabel>
       <SidebarMenu>
-        {history.map((chat) => (
+        {chatHistory.map((chat) => (
           <SidebarMenuItem key={chat.Chat_Id}>
             <SidebarMenuButton asChild>
               <a
@@ -65,33 +54,6 @@ export function SidebarHistory({ history }: { history: ChatTitle[] }) {
                 <span>{chat.title}</span>
               </a>
             </SidebarMenuButton>
-            {/* <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuAction showOnHover>
-                  <MoreHorizontal />
-                  <span className="sr-only">More</span>
-                </SidebarMenuAction>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="w-48 rounded-lg"
-                side={isMobile ? "bottom" : "right"}
-                align={isMobile ? "end" : "start"}
-              >
-                <DropdownMenuItem>
-                  <Folder className="text-muted-foreground" />
-                  <span>View Project</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Forward className="text-muted-foreground" />
-                  <span>Share Project</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Trash2 className="text-muted-foreground" />
-                  <span>Delete Project</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu> */}
           </SidebarMenuItem>
         ))}
         {/* <SidebarMenuItem>

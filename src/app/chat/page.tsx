@@ -20,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ChatProvider } from "@/context/chat-context";
+import { ChatProvider, useChat } from "@/context/chat-context";
 import { apiClient } from "@/lib/api-handler";
 import { cn } from "@/lib/utils";
 import { Check, Copy, Loader2, Paperclip, Plus, Send, X } from "lucide-react";
@@ -28,6 +28,9 @@ import type React from "react";
 import { JSX, useEffect, useRef, useState } from "react";
 
 export default function Chat() {
+   const { chats } = useChat();
+   console.log("Chat page chat data", chats)
+  //  let newsg:Message = chats[0]
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
@@ -52,6 +55,13 @@ export default function Chat() {
       setUserEmail(userDataEmail);
     }
   }, []);
+
+  useEffect(() => {
+    if (chats.length > 0) {
+      const allMessages = chats.flatMap(chat => chat);
+      setMessages(allMessages);
+    }
+  }, [chats]);
   
   const [Chat_Id] = useState(() => `${Date.now()}-${crypto.randomUUID()}`);
 
@@ -400,7 +410,7 @@ export default function Chat() {
   ];
 
   return (
-    <ChatProvider>
+    <>
     <div className="flex h-auto w-full bg-white dark:bg-gray-900">
       <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full">
         <div className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4">
@@ -682,6 +692,6 @@ export default function Chat() {
         />
       </div>
     </div>
-    </ChatProvider>
+    </>
   );
 }

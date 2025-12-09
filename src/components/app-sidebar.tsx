@@ -58,12 +58,8 @@ const data = {
   ],
 }
 
-interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
-  History: ChatTitle[]; 
-}
 
-
-export function AppSidebar({ History, ...props }: AppSidebarProps) {
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -71,7 +67,7 @@ export function AppSidebar({ History, ...props }: AppSidebarProps) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <SidebarHistory history={History} />
+        <SidebarHistory />
       </SidebarContent>
       <SidebarFooter>
         <ThemeToggle TypeButton={true}/>

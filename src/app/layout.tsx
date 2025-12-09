@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { apiClient } from "@/lib/api-handler";
+import { ChatProvider } from "@/context/chat-context";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,28 +44,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
   const authPaths = ["/", "/signin", "/signup"];
   const showSidebar = !authPaths.includes(pathname);
   const PathNameArray = pathname.split("/").filter(Boolean);
-  const [chatHistory, setChatHistory] = useState<ChatTitle[] | null>(null);
-
-  useEffect(() => {
-    const storedUserEmail = localStorage.getItem("userEmail");
-
-    const loadChatHistory = async () => {
-      try {
-        const response = await apiClient.fetchChatHistory(storedUserEmail!);
-        const data = await response.json();
-
-        const chatHistoryDocument = data.chatHistoryDoc;
-        if (chatHistoryDocument) {
-          setChatHistory(chatHistoryDocument.ChatHistory); 
-        }
-      } catch (error) {
-        console.error("Failed to fetch chat history:", error);
-      }
-    };
-
-    loadChatHistory();
-  }, []);
-
+  
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -77,16 +57,18 @@ export default function RootLayout({ children }: RootLayoutProps) {
             enableSystem
             disableTransitionOnChange
           >
+            <ChatProvider>
             <Toaster position="top-right" closeButton />
             {showSidebar ? (
               <SidebarProvider>
-                <AppSidebar History={chatHistory ?? []} />
+                <AppSidebar />
 
                 {children}
               </SidebarProvider>
             ) : (
               children
             )}
+            </ChatProvider>
           </ThemeProvider>
         </main>
       </body>
