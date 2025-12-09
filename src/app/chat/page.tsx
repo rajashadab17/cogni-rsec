@@ -44,6 +44,7 @@ export default function Chat() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [Model, setModel] = useState<string>("");
   const [userEmail, setUserEmail] = useState("");
+  // let Chat_Id = ""
 
   useEffect(() => {
     const userDataEmail = localStorage.getItem("userEmail");
@@ -51,8 +52,9 @@ export default function Chat() {
       setUserEmail(userDataEmail);
     }
   }, []);
+  
+  const [Chat_Id] = useState(() => `${Date.now()}-${crypto.randomUUID()}`);
 
-  let Chat_Id = `${Date.now()}-${crypto.randomUUID()}`
   const handleSendMessage = async () => {
     if (!inputValue.trim() && uploadedFiles.length === 0) return;
 
