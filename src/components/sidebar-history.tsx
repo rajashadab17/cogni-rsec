@@ -26,18 +26,19 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 
-export function NavProjects({
-  projects,
+export function SidebarHistory({
+  history,
 }: {
-  projects: ChatTitle [] 
+  history: ChatTitle [] 
 }) {
   const { isMobile } = useSidebar()
+  
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Discussed History</SidebarGroupLabel>
       <SidebarMenu>
-        {projects.map((chat) => (
+        {history.map((chat) => (
           <SidebarMenuItem key={chat.Chat_Id}>
             <SidebarMenuButton asChild>
               <a href={"#"}>
@@ -45,7 +46,7 @@ export function NavProjects({
                 <span>{chat.title}</span>
               </a>
             </SidebarMenuButton>
-            <DropdownMenu>
+            {/* <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuAction showOnHover>
                   <MoreHorizontal />
@@ -71,15 +72,15 @@ export function NavProjects({
                   <span>Delete Project</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
-            </DropdownMenu>
+            </DropdownMenu> */}
           </SidebarMenuItem>
         ))}
-        <SidebarMenuItem>
+        {/* <SidebarMenuItem>
           <SidebarMenuButton className="text-sidebar-foreground/70">
             <MoreHorizontal className="text-sidebar-foreground/70" />
             <span>More</span>
           </SidebarMenuButton>
-        </SidebarMenuItem>
+        </SidebarMenuItem> */}
       </SidebarMenu>
     </SidebarGroup>
   )

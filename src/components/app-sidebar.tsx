@@ -1,21 +1,16 @@
 "use client"
 
 import {
-  AudioWaveform,
-  BookOpen,
-  Bot,
-  Command,
   Frame,
   GalleryVerticalEnd,
   Map,
-  PieChart,
-  Settings2
+  PieChart
 } from "lucide-react"
 import * as React from "react"
 
 import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
 import { NavUser } from "@/components/nav-user"
+import { SidebarHistory } from "@/components/sidebar-history"
 import { TeamSwitcher } from "@/components/team-switcher"
 import {
   Sidebar,
@@ -76,7 +71,7 @@ export function AppSidebar({ History, ...props }: AppSidebarProps) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavProjects projects={History} />
+        <SidebarHistory history={History} />
       </SidebarContent>
       <SidebarFooter>
         <ThemeToggle TypeButton={true}/>
