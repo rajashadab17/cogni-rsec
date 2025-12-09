@@ -47,7 +47,7 @@ class ApiClient {
   async getUser(userEmail: string): Promise<UserDataResponse> {
     return this.fetch(`/user/${encodeURIComponent(userEmail)}`);
   }
-
+  
   async registerUser(
     userData: UserDataResponse["user"]
   ): Promise<UserDataResponse> {
@@ -70,26 +70,30 @@ class ApiClient {
 
   async UpdateChatHistory(userEmail: string, userMessage: Message): Promise<Response> {
     return fetch(`/api/user/${encodeURIComponent(userEmail)}/chat`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(userMessage),
-      });
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(userMessage),
+    });
   }
-
+  
   async SaveTitle (titleObj: ChatTitle, userEmail:string){
     return fetch(`/api/user/${encodeURIComponent(userEmail)}/chat`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(titleObj),
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(titleObj),
       });
-  }
-
-  async SaveChat (userEmail:string, Chat_Id:string,  userMessage: Message){
-    return fetch(`/api/user/chat/${encodeURIComponent(Chat_Id)}/`, {
+    }
+    
+    async SaveChat (userEmail:string, Chat_Id:string,  userMessage: Message){
+      return fetch(`/api/user/chat/${encodeURIComponent(Chat_Id)}/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userMessage),
       });
+  }
+
+  async fetchChatHistory(userEmail: string): Promise<Response> {
+    return fetch(`/api/user/${encodeURIComponent(userEmail)}/chat`);
   }
 }
 

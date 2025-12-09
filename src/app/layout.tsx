@@ -5,7 +5,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/theme-provider";
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import {
   Breadcrumb,
@@ -22,6 +22,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
+import { apiClient } from "@/lib/api-handler";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,6 +44,26 @@ export default function RootLayout({ children }: RootLayoutProps) {
   const authPaths = ["/", "/signin", "/signup"];
   const showSidebar = !authPaths.includes(pathname);
   const PathNameArray = pathname.split("/").filter(Boolean);
+  const [chatHistory, setChatHistory] = useState<ChatHistory []>([]);
+
+useEffect(() => {
+  const storedUserEmail = localStorage.getItem("userEmail");
+
+  const loadChatHistory = async () => {
+    try {
+      const response = await apiClient.fetchChatHistory(storedUserEmail!);
+      const data = await response.json();
+
+      const chatHistoryDocument = data.chatHistoryDoc; 
+      setChatHistory(chatHistoryDocument?.ChatHistory || []);
+    } catch (error) {
+      console.error("Failed to fetch chat history:", error);
+    }
+  };
+
+  loadChatHistory();
+}, []);
+
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -59,7 +80,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             <Toaster position="top-right" closeButton />
             {showSidebar ? (
               <SidebarProvider>
-                <AppSidebar />
+                <AppSidebar History={chatHistory}/>
                   {children}
               </SidebarProvider>
             ) : (

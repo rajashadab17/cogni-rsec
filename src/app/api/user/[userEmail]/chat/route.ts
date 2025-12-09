@@ -23,8 +23,8 @@ export async function POST(req: Request, { params }: any) {
       $set: {
         ChatHistory: {
           $concatArrays: [
-            { $ifNull: ["$ChatHistory", []] }, // existing array or empty
-            [titleObj]                         // new item to push
+            { $ifNull: ["$ChatHistory", []] }, 
+            [titleObj]                         
           ]
         },
         userEmail: { $ifNull: ["$userEmail", userEmail] }
@@ -45,3 +45,37 @@ export async function POST(req: Request, { params }: any) {
     );
   }
 }
+
+export async function GET(req: Request, { params }: any) {
+  await connectToDatabase();
+
+  try {
+    const { userEmail } = await params;
+
+    if (!userEmail) {
+      return NextResponse.json(
+        { error: "Missing userEmail in params" },
+        { status: 400 }
+      );
+    }
+
+    const chatHistoryDoc = await ChatHistoryModel.findOne({ userEmail });
+
+    if (!chatHistoryDoc) {
+      return NextResponse.json(
+        { error: "No chat history found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ success: true, chatHistoryDoc });
+
+  } catch (error) {
+    console.error("GET error:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch chat history" },
+      { status: 500 }
+    );
+  }
+}
+

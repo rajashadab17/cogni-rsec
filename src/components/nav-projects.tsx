@@ -29,23 +29,21 @@ import {
 export function NavProjects({
   projects,
 }: {
-  projects: {
-    name: string
-    url: string
-    icon: LucideIcon
-  }[]
+  projects: ChatHistory []
 }) {
   const { isMobile } = useSidebar()
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Discussed History</SidebarGroupLabel>
-      <SidebarMenu>
+      {
+        
+      }
+      {/* <SidebarMenu>
         {projects.map((item) => (
-          <SidebarMenuItem key={item.name}>
+          <SidebarMenuItem key={item.}>
             <SidebarMenuButton asChild>
               <a href={item.url}>
-                {/* <item.icon /> */}
                 <History/>
                 <span>{item.name}</span>
               </a>
@@ -85,7 +83,7 @@ export function NavProjects({
             <span>More</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
-      </SidebarMenu>
+      </SidebarMenu> */}
     </SidebarGroup>
   )
 }
