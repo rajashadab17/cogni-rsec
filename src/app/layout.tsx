@@ -6,7 +6,7 @@ import "./globals.css";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ReactNode, useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -24,6 +24,7 @@ import {
 import { AppSidebar } from "@/components/app-sidebar";
 import { apiClient } from "@/lib/api-handler";
 import { ChatProvider } from "@/context/chat-context";
+import ClientWrapper from "@/components/client-wrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,8 +44,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
   const pathname = usePathname() || "/";
   const authPaths = ["/", "/signin", "/signup"];
   const showSidebar = !authPaths.includes(pathname);
-  const PathNameArray = pathname.split("/").filter(Boolean);
-  
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -58,16 +57,18 @@ export default function RootLayout({ children }: RootLayoutProps) {
             disableTransitionOnChange
           >
             <ChatProvider>
-            <Toaster position="top-right" closeButton />
-            {showSidebar ? (
-              <SidebarProvider>
-                <AppSidebar />
+              <Toaster position="top-right" closeButton />
+              <ClientWrapper>
+                {showSidebar ? (
+                  <SidebarProvider>
+                    <AppSidebar />
 
-                {children}
-              </SidebarProvider>
-            ) : (
-              children
-            )}
+                    {children}
+                  </SidebarProvider>
+                ) : (
+                  children
+                )}
+              </ClientWrapper>
             </ChatProvider>
           </ThemeProvider>
         </main>
