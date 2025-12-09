@@ -1,4 +1,5 @@
 import { connectToDatabase } from "@/lib/db";
+import ChatHistoryModel from "@/models/ChatHistorySchema";
 import ChatModel from "@/models/ChatSchema";
 import { NextResponse } from "next/server";
 
@@ -60,3 +61,46 @@ export async function GET(req: Request, { params }: any) {
     );
   }
 }
+
+export async function DELETE(req: Request, { params }: any) {
+  await connectToDatabase();
+
+  try {
+    const { Chat_Id } = await params;
+
+    if (!Chat_Id) {
+      return NextResponse.json(
+        { error: "Missing Chat_Id in params" },
+        { status: 400 }
+      );
+    }
+
+    const deletedChat = await ChatModel.findOneAndDelete({ Chat_Id });
+
+    if (!deletedChat) {
+      return NextResponse.json(
+        { error: "No chat found to delete" },
+        { status: 404 }
+      );
+    }
+
+    await ChatHistoryModel.updateMany(
+      {},
+      { $pull: { ChatHistory: { Chat_Id } } }
+    );
+
+    return NextResponse.json({
+      success: true,
+      message: "Chat & chat history deleted successfully",
+      deletedChat
+    });
+
+  } catch (error) {
+    console.error("DELETE error:", error);
+    return NextResponse.json(
+      { error: "Failed to delete chat" },
+      { status: 500 }
+    );
+  }
+}
+
