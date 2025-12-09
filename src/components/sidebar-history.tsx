@@ -29,10 +29,7 @@ export function SidebarHistory() {
     try {
       const response = await apiClient.fetchChat(Chat_Id!);
       const data = await response.json();
-      // console.log(data);
       const chatDocument = data.chatDoc;
-      // console.log("chat doc ",data.chatDoc)
-      // console.log("chat doc chat",chatDocument.Chat)
       if (chatDocument) {
         setChats(chatDocument.Chat);
       }
@@ -40,6 +37,10 @@ export function SidebarHistory() {
       console.error("Failed to fetch chat history:", error);
     }
   };
+
+  const DeleteChat = async(Chat_Id:string) => {
+    await apiClient.DeleteChat(Chat_Id)
+  }
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
@@ -70,7 +71,7 @@ export function SidebarHistory() {
                 side={isMobile ? "bottom" : "right"}
                 align={isMobile ? "end" : "start"}
               >
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => {DeleteChat(chat.Chat_Id)}}>
                   <Trash2 className="text-muted-foreground" />
                   <span>Delete Project</span>
                 </DropdownMenuItem>
