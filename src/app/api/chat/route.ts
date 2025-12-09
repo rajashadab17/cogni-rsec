@@ -7,11 +7,13 @@ const openai = new OpenAI({
 });
 
 const models = [
-  "deepseek/deepseek-chat-v3.1:free",
+  "tngtech/deepseek-r1t2-chimera:free",
+  "arcee-ai/trinity-mini:free",
   "meta-llama/llama-3.1-8b-instruct:free",
   "mistralai/mistral-7b-instruct:free",
   "openai/gpt-oss-120b:free",
   "openai/gpt-3.5-turbo-16k",
+  "deepseek/deepseek-chat-v3.1:free",
 ];
 
 export async function POST(req: NextRequest) {

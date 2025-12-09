@@ -381,17 +381,22 @@ export default function Chat() {
   };
 
   const models = [
-    { Model: "DeepSeek v3.1:free", Api: "deepseek/deepseek-chat-v3.1:free" },
     {
-      Model: "llama v3.1-8b-instruct:free",
+      Model: "llama v3.1-8b-instruct",
       Api: "meta-llama/llama-3.1-8b-instruct:free",
     },
     {
-      Model: "Mistral v7b-instruct:free",
+      Model: "Arcee-AI/trinity-mini",
+      Api: "arcee-ai/trinity-mini:free",
+    },
+    {
+      Model: "Mistral v7b-instruct",
       Api: "mistralai/mistral-7b-instruct:free",
     },
     { Model: "GPT Oss-120b:free", Api: "openai/gpt-oss-120b:free" },
     { Model: "GPT v3.5 Turbo-16k", Api: "openai/gpt-3.5-turbo-16k" },
+    { Model: "Tngtech/deepseek-r1t2-chimera", Api: "tngtech/deepseek-r1t2-chimera:free" },
+    { Model: "DeepSeek v3.1:free", Api: "deepseek/deepseek-chat-v3.1:free" },
   ];
 
   return (
