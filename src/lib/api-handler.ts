@@ -92,12 +92,21 @@ class ApiClient {
       });
   }
 
+  async DeleteChat (Chat_Id:string){
+      return fetch(`/api/user/chat/${encodeURIComponent(Chat_Id)}/`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: Chat_Id,
+      });
+  }
+
   async fetchChatHistory(userEmail: string): Promise<Response> {
     return fetch(`/api/user/${encodeURIComponent(userEmail)}/chat`);
   }
   async fetchChat(Chat_Id: string): Promise<Response> {
     return fetch(`/api/user/chat/${encodeURIComponent(Chat_Id)}/`);
   }
+
 }
 
 export const apiClient = new ApiClient();
