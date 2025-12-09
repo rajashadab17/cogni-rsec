@@ -546,7 +546,7 @@ export default function Chat() {
                   {message.sender === "user" && (
                     <Avatar className="h-8 w-8 mt-1">
                       <AvatarFallback className="bg-gray-600 text-white text-xs font-medium">
-                        U
+                        {userEmail.charAt(0).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                   )}
