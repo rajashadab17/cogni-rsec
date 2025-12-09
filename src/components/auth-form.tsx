@@ -2,12 +2,12 @@
 
 import { Button } from "@/components/ui/button";
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,6 +20,7 @@ import { z } from "zod";
 import { toast } from "./custom-toast";
 import SubmitButton from "./submit-button";
 import { apiClient } from "@/lib/api-handler";
+import bcrypt from "bcryptjs";
 
 interface AuthFormProps {
   ShowPage: "signin" | "signup";
@@ -106,26 +107,41 @@ export default function AuthForm({ ShowPage }: AuthFormProps) {
 
     try {
       const UserDataRequest = await apiClient.getUser(signInData.userEmail);
-      if (UserDataRequest.message == "User not found!") {
+
+      if (!UserDataRequest || UserDataRequest.message === "User not found!") {
         toast.warning({
           title: "Warning",
           description: "User not found!",
         });
+        return;
+      }
+
+      const user = UserDataRequest.user;
+      if (!user) {
+        toast.warning({
+          title: "Warning",
+          description: "User data is missing!",
+        });
+        return;
+      }
+
+      const isMatch = await bcrypt.compare(values.password, user.password);
+
+      if (isMatch && values.userEmail === user.userEmail) {
+        toast.success({
+          title: "Success",
+          description: "You have successfully logged in!",
+        });
+
+        localStorage.setItem("userName", user.username);
+        localStorage.setItem("userEmail", user.userEmail);
+
+        router.push("/chat");
       } else {
-        if (values.userEmail == UserDataRequest.user?.userEmail && values.password == UserDataRequest.user.password) {
-          toast.success({
-            title: "Success",
-            description: "You have successfully logged in!",
-          });
-          localStorage.setItem("userName", UserDataRequest.user.username)
-          localStorage.setItem("userEmail", UserDataRequest.user.userEmail)
-          router.push("/chat");
-        } else {
-          toast.warning({
-            title: "Warning",
-            description: "Invalid Credentials!",
-          });
-        }
+        toast.warning({
+          title: "Warning",
+          description: "Invalid credentials!",
+        });
       }
     } catch (error) {
       toast.error({
@@ -133,16 +149,15 @@ export default function AuthForm({ ShowPage }: AuthFormProps) {
         description: (error as Error).message,
       });
     }
-
-
   }
 
   const onSignUpSubmit = async () => {
     const values = signUpForm.getValues();
-
     const isAnyFieldEmpty = Object.values(values).some(
       (value) => !value?.toString().trim()
     );
+
+    const salt = await bcrypt.genSalt(10);
 
     if (isAnyFieldEmpty) {
       toast.warning({
@@ -160,7 +175,7 @@ export default function AuthForm({ ShowPage }: AuthFormProps) {
       return;
     }
 
-    if (!values.userEmail.includes('@') || !values.userEmail.includes('.com')) {
+    if (!values.userEmail.includes("@") || !values.userEmail.includes(".com")) {
       toast.warning({
         title: "Warning",
         description: "Plase input a valid email address",
@@ -169,6 +184,8 @@ export default function AuthForm({ ShowPage }: AuthFormProps) {
     }
 
     try {
+      values.password = await bcrypt.hash(values.password, salt);
+      values.confirmPassword = await bcrypt.hash(values.confirmPassword, salt);
       await apiClient.registerUser(values);
       toast.success({
         title: "Success",
@@ -181,7 +198,6 @@ export default function AuthForm({ ShowPage }: AuthFormProps) {
         description: (error as Error).message,
       });
     }
-
   };
 
   return (
