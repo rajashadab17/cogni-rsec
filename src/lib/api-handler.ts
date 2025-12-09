@@ -95,6 +95,9 @@ class ApiClient {
   async fetchChatHistory(userEmail: string): Promise<Response> {
     return fetch(`/api/user/${encodeURIComponent(userEmail)}/chat`);
   }
+  async fetchChat(Chat_Id: string): Promise<Response> {
+    return fetch(`/api/user/chat/${encodeURIComponent(Chat_Id)}/`);
+  }
 }
 
 export const apiClient = new ApiClient();

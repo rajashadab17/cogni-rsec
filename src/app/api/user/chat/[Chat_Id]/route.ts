@@ -27,3 +27,36 @@ export async function POST(req: Request, { params }: any) {
     );
   }
 }
+
+export async function GET(req: Request, { params }: any) {
+  await connectToDatabase();
+
+  try {
+    const { Chat_Id } = await params;
+
+    if (!Chat_Id) {
+      return NextResponse.json(
+        { error: "Missing Chat_Id in params" },
+        { status: 400 }
+      );
+    }
+
+    const chatDoc = await ChatModel.findOne({ Chat_Id });
+
+    if (!chatDoc) {
+      return NextResponse.json(
+        { error: "No chat found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ success: true, chatDoc });
+
+  } catch (error) {
+    console.error("GET error:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch chat" },
+      { status: 500 }
+    );
+  }
+}

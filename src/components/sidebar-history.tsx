@@ -25,6 +25,8 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { apiClient } from "@/lib/api-handler"
+import { useEffect, useState } from "react"
 
 export function SidebarHistory({
   history,
@@ -32,6 +34,24 @@ export function SidebarHistory({
   history: ChatTitle [] 
 }) {
   const { isMobile } = useSidebar()
+
+  const [chatHistory, setChatHistory] = useState<ChatTitle[] | null>(null);
+  
+  
+      const loadChat = async (Chat_Id:string) => {
+        // try {
+        //   const response = await apiClient.fetchChat(Chat_Id!);
+        //   const data = await response.json();
+  
+        //   const chatHistoryDocument = data.chatHistoryDoc;
+        //   if (chatHistoryDocument) {
+        //     setChatHistory(chatHistoryDocument.ChatHistory); 
+        //   }
+        // } catch (error) {
+        //   console.error("Failed to fetch chat history:", error);
+        // }
+      };
+
   
 
   return (
@@ -41,7 +61,7 @@ export function SidebarHistory({
         {history.map((chat) => (
           <SidebarMenuItem key={chat.Chat_Id}>
             <SidebarMenuButton asChild>
-              <a href={"#"}>
+              <a href={"#"} onClick={(e) => {loadChat(chat.Chat_Id)}}>
                 <History/>
                 <span>{chat.title}</span>
               </a>
