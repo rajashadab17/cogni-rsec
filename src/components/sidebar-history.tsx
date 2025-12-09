@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Folder,
@@ -7,7 +7,7 @@ import {
   MoreHorizontal,
   Trash2,
   type LucideIcon,
-} from "lucide-react"
+} from "lucide-react";
 
 import {
   DropdownMenu,
@@ -15,7 +15,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -24,35 +24,29 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar"
-import { apiClient } from "@/lib/api-handler"
-import { useEffect, useState } from "react"
+} from "@/components/ui/sidebar";
+import { apiClient } from "@/lib/api-handler";
+import { useEffect, useState } from "react";
 
-export function SidebarHistory({
-  history,
-}: {
-  history: ChatTitle [] 
-}) {
-  const { isMobile } = useSidebar()
+export function SidebarHistory({ history }: { history: ChatTitle[] }) {
+  const { isMobile } = useSidebar();
 
   const [chat, setChat] = useState<ChatTitle[] | null>(null);
   
-  
-      const loadChat = async (Chat_Id:string) => {
-        try {
-          const response = await apiClient.fetchChat(Chat_Id!);
-          const data = await response.json();
-          console.log(data)
-          const chatDocument = data.ChatDoc;
-          if (chatDocument) {
-            setChat(chatDocument.ChatHistory); 
-          }
-        } catch (error) {
-          console.error("Failed to fetch chat history:", error);
-        }
-      };
 
-  
+  const loadChat = async (Chat_Id: string) => {
+    try {
+      const response = await apiClient.fetchChat(Chat_Id!);
+      const data = await response.json();
+      console.log(data);
+      const chatDocument = data.ChatDoc;
+      if (chatDocument) {
+        setChat(chatDocument.ChatHistory);
+      }
+    } catch (error) {
+      console.error("Failed to fetch chat history:", error);
+    }
+  };
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
@@ -61,8 +55,13 @@ export function SidebarHistory({
         {history.map((chat) => (
           <SidebarMenuItem key={chat.Chat_Id}>
             <SidebarMenuButton asChild>
-              <a href={"#"} onClick={(e) => {loadChat(chat.Chat_Id)}}>
-                <History/>
+              <a
+                href={"#"}
+                onClick={(e) => {
+                  loadChat(chat.Chat_Id);
+                }}
+              >
+                <History />
                 <span>{chat.title}</span>
               </a>
             </SidebarMenuButton>
@@ -103,5 +102,5 @@ export function SidebarHistory({
         </SidebarMenuItem> */}
       </SidebarMenu>
     </SidebarGroup>
-  )
+  );
 }

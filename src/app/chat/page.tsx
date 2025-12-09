@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ChatProvider } from "@/context/chat-context";
 import { apiClient } from "@/lib/api-handler";
 import { cn } from "@/lib/utils";
 import { Check, Copy, Loader2, Paperclip, Plus, Send, X } from "lucide-react";
@@ -399,6 +400,7 @@ export default function Chat() {
   ];
 
   return (
+    <ChatProvider>
     <div className="flex h-auto w-full bg-white dark:bg-gray-900">
       <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full">
         <div className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4">
@@ -680,5 +682,6 @@ export default function Chat() {
         />
       </div>
     </div>
+    </ChatProvider>
   );
 }
