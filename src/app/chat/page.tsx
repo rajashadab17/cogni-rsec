@@ -522,7 +522,6 @@ export default function Chat() {
                       })}
                     </span>
 
-                    {/* Copy Button */}
                     {message.content && !message.isStreaming && (
                       <Button
                         onClick={() => handleCopy(message.id, message.content)}
